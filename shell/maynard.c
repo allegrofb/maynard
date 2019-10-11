@@ -28,7 +28,6 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkwayland.h>
 
-#include "desktop-shell-client-protocol.h"
 #include "weston-desktop-shell-client-protocol.h"
 #include "shell-helper-client-protocol.h"
 
@@ -52,7 +51,6 @@ struct element {
 struct desktop {
   struct wl_display *display;
   struct wl_registry *registry;
-  struct desktop_shell *shell;
   struct weston_desktop_shell *wshell;
   struct wl_output *output;
   struct shell_helper *helper;
@@ -142,25 +140,12 @@ shell_configure (struct desktop *desktop,
       - grid_width,
       ((height - window_height) / 2) + MAYNARD_CLOCK_HEIGHT);
 
-  if (desktop->shell)
-      desktop_shell_desktop_ready (desktop->shell);
-  else
-      weston_desktop_shell_desktop_ready (desktop->wshell);
+  weston_desktop_shell_desktop_ready (desktop->wshell);
 
   /* TODO: why does the panel signal leave on drawing for
    * startup? we don't want to have to have this silly
    * timeout. */
   g_timeout_add_seconds (1, connect_enter_leave_signals, desktop);
-}
-
-static void
-desktop_shell_configure (void *data,
-    struct desktop_shell *desktop_shell,
-    uint32_t edges,
-    struct wl_surface *surface,
-    int32_t width, int32_t height)
-{
-  shell_configure(data, edges, surface, width, height);
 }
 
 static void
@@ -174,24 +159,10 @@ weston_desktop_shell_configure (void *data,
 }
 
 static void
-desktop_shell_prepare_lock_surface (void *data,
-    struct desktop_shell *desktop_shell)
-{
-  desktop_shell_unlock (desktop_shell);
-}
-
-static void
 weston_desktop_shell_prepare_lock_surface (void *data,
     struct weston_desktop_shell *weston_desktop_shell)
 {
   weston_desktop_shell_unlock (weston_desktop_shell);
-}
-
-static void
-desktop_shell_grab_cursor (void *data,
-    struct desktop_shell *desktop_shell,
-    uint32_t cursor)
-{
 }
 
 static void
@@ -200,12 +171,6 @@ weston_desktop_shell_grab_cursor (void *data,
     uint32_t cursor)
 {
 }
-
-static const struct desktop_shell_listener shell_listener = {
-  desktop_shell_configure,
-  desktop_shell_prepare_lock_surface,
-  desktop_shell_grab_cursor
-};
 
 static const struct weston_desktop_shell_listener wshell_listener = {
   weston_desktop_shell_configure,
@@ -490,21 +455,13 @@ panel_create (struct desktop *desktop)
   gdk_wayland_window_set_use_custom_surface (gdk_window);
 
   panel->surface = gdk_wayland_window_get_wl_surface (gdk_window);
-  if (desktop->shell)
-    {
-      desktop_shell_set_user_data (desktop->shell, desktop);
-      desktop_shell_set_panel (desktop->shell, desktop->output, panel->surface);
-      desktop_shell_set_panel_position (desktop->shell,
-	  DESKTOP_SHELL_PANEL_POSITION_LEFT);
-    }
-  else
-    {
-      weston_desktop_shell_set_user_data (desktop->wshell, desktop);
-      weston_desktop_shell_set_panel (desktop->wshell, desktop->output,
-          panel->surface);
-      weston_desktop_shell_set_panel_position (desktop->wshell,
-	  DESKTOP_SHELL_PANEL_POSITION_LEFT);
-    }
+
+  weston_desktop_shell_set_user_data (desktop->wshell, desktop);
+  weston_desktop_shell_set_panel (desktop->wshell, desktop->output,
+      panel->surface);
+  weston_desktop_shell_set_panel_position (desktop->wshell,
+     WESTON_DESKTOP_SHELL_PANEL_POSITION_LEFT);
+
   shell_helper_set_panel (desktop->helper, panel->surface);
 
   gtk_widget_show_all (panel->window);
@@ -540,19 +497,24 @@ scale_background (GdkPixbuf *original_pixbuf)
   /* Scale original_pixbuf so it mostly fits on the screen.
    * If the aspect ratio is different than a bit on the right or on the
    * bottom could be cropped out. */
-  GdkScreen *screen = gdk_screen_get_default ();
-  gint screen_width, screen_height;
+  GdkDisplay *display = gdk_display_get_default ();
+  /* There's no primary monitor on nested wayland so just use the
+     first one for now */
+  GdkMonitor *monitor = gdk_display_get_monitor (display, 0);
+  GdkRectangle geom;
   gint original_width, original_height;
   gint final_width, final_height;
   gdouble ratio_horizontal, ratio_vertical, ratio;
 
-  screen_width = gdk_screen_get_width (screen);
-  screen_height = gdk_screen_get_height (screen);
+  g_return_val_if_fail(monitor, NULL);
+
+  gdk_monitor_get_geometry (monitor, &geom);
+
   original_width = gdk_pixbuf_get_width (original_pixbuf);
   original_height = gdk_pixbuf_get_height (original_pixbuf);
 
-  ratio_horizontal = (double) screen_width / original_width;
-  ratio_vertical = (double) screen_height / original_height;
+  ratio_horizontal = (double) geom.width / original_width;
+  ratio_vertical = (double) geom.height / original_height;
   ratio = MAX (ratio_horizontal, ratio_vertical);
 
   final_width = ceil (ratio * original_width);
@@ -606,18 +568,10 @@ background_create (struct desktop *desktop)
   gdk_wayland_window_set_use_custom_surface (gdk_window);
 
   background->surface = gdk_wayland_window_get_wl_surface (gdk_window);
-  if (desktop->shell)
-    {
-      desktop_shell_set_user_data (desktop->shell, desktop);
-      desktop_shell_set_background (desktop->shell, desktop->output,
-	  background->surface);
-    }
-  else
-    {
-      weston_desktop_shell_set_user_data (desktop->wshell, desktop);
-      weston_desktop_shell_set_background (desktop->wshell, desktop->output,
-	  background->surface);
-    }
+
+  weston_desktop_shell_set_user_data (desktop->wshell, desktop);
+  weston_desktop_shell_set_background (desktop->wshell, desktop->output,
+      background->surface);
 
   desktop->background = background;
 
@@ -783,14 +737,7 @@ registry_handle_global (void *data,
 {
   struct desktop *d = data;
 
-  if (!strcmp (interface, "desktop_shell"))
-    {
-      d->shell = wl_registry_bind (registry, name,
-          &desktop_shell_interface, MIN(version, 3));
-      desktop_shell_add_listener (d->shell, &shell_listener, d);
-      desktop_shell_set_user_data (d->shell, d);
-    }
-  else if (!strcmp (interface, "weston_desktop_shell"))
+  if (!strcmp (interface, "weston_desktop_shell"))
     {
       d->wshell = wl_registry_bind (registry, name,
           &weston_desktop_shell_interface, MIN(version, 1));
@@ -873,7 +820,7 @@ main (int argc,
 
   desktop = malloc (sizeof *desktop);
   desktop->output = NULL;
-  desktop->shell = NULL;
+  desktop->wshell = NULL;
   desktop->helper = NULL;
   desktop->seat = NULL;
   desktop->pointer = NULL;
@@ -893,13 +840,13 @@ main (int argc,
 
   /* Wait until we have been notified about the compositor,
    * shell, and shell helper objects */
-  if (!desktop->output || (!desktop->shell && !desktop->wshell) ||
-      !desktop->helper)
+  if (!desktop->output || !desktop->wshell || !desktop->helper)
     wl_display_roundtrip (desktop->display);
-  if (!desktop->output || (!desktop->shell && !desktop->wshell) ||
-      !desktop->helper)
+  if (!desktop->output || !desktop->wshell || !desktop->helper)
     {
       fprintf (stderr, "could not find output, shell or helper modules\n");
+      fprintf (stderr, "output: %p, wshell: %p, helper: %p\n",
+               desktop->output, desktop->wshell, desktop->helper);
       return -1;
     }
 
