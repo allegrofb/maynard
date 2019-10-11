@@ -32,22 +32,22 @@ You can then run maynard with
 # log
 Ubuntu 18.04
 
-sudo apt-get install autoconf
-sudo apt-get install libtool
-sudo apt-get install intltool
-sudo apt-get install libgtk-3-dev
-sudo apt-get install libgnome-desktop-3-dev
-sudo apt-get install libgnome-menu-3-dev
-sudo apt-get install libasound2-dev
-sudo apt-get install weston
-sudo apt-get install libweston-3-dev
+    sudo apt-get install autoconf
+    sudo apt-get install libtool
+    sudo apt-get install intltool
+    sudo apt-get install libgtk-3-dev
+    sudo apt-get install libgnome-desktop-3-dev
+    sudo apt-get install libgnome-menu-3-dev
+    sudo apt-get install libasound2-dev
+    sudo apt-get install weston
+    sudo apt-get install libweston-3-dev
 
 
-autoreconf --install
-./configure
-make
-make install
-weston -c ~/.config/weston.ini    
+    autoreconf --install
+    ./configure
+    make
+    make install
+    weston -c ~/.config/weston.ini    
 
 	
 	
