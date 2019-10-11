@@ -29,7 +29,7 @@ You can then run maynard with
 	
 	
 	
-#log
+# log
 Ubuntu 18.04
 
 sudo apt-get install autoconf
