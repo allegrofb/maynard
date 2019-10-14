@@ -280,7 +280,7 @@ maynard_panel_class_init (MaynardPanelClass *klass)
 GtkWidget *
 maynard_panel_new (void)
 {
-  return g_object_new (MAYNARD_PANEL_TYPE,
+  return g_object_new (MAYNARD_PANEL_TYPE,             //hyjiang
       NULL);
 }
 

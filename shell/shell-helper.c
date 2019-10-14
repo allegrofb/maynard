@@ -470,7 +470,7 @@ wet_module_init(struct weston_compositor *ec,
 	helper->curtain_view = NULL;
 	helper->curtain_show = 0;
 
-	wl_list_init(&helper->slide_list);
+	wl_list_init(&helper->slide_list);             //hyjiang, wayland ??, wl_*
 
 	helper->destroy_listener.notify = helper_destroy;
 	wl_signal_add(&ec->destroy_signal, &helper->destroy_listener);
