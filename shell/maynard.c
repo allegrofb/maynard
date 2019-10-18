@@ -438,7 +438,7 @@ panel_create (struct desktop *desktop)           //hyjiang
 
   panel->window = maynard_panel_new ();
 
-  g_signal_connect (panel->window, "app-menu-toggled",
+  g_signal_connect (panel->window, "app-menu-toggled",   //hyjiang, like QT signal/slot
       G_CALLBACK (launcher_grid_toggle), desktop);
   g_signal_connect (panel->window, "system-toggled",
       G_CALLBACK (system_toggled_cb), desktop);
@@ -567,10 +567,10 @@ background_create (struct desktop *desktop)
   gdk_window = gtk_widget_get_window (background->window);
   gdk_wayland_window_set_use_custom_surface (gdk_window);
 
-  background->surface = gdk_wayland_window_get_wl_surface (gdk_window);
+  background->surface = gdk_wayland_window_get_wl_surface (gdk_window);     //hyjiang, get wl_surface via gtk 3.0 api, latest version not found
 
   weston_desktop_shell_set_user_data (desktop->wshell, desktop);
-  weston_desktop_shell_set_background (desktop->wshell, desktop->output,
+  weston_desktop_shell_set_background (desktop->wshell, desktop->output,    //hyjiang, weston-desktop-shell.xml function, call weston server
       background->surface);
 
   desktop->background = background;
@@ -856,7 +856,7 @@ main (int argc,
   desktop->pointer_out_of_panel = FALSE;
 
   css_setup (desktop);
-  background_create (desktop);
+  background_create (desktop);                //hyjiang, create background, call weston server api via protocol 
   curtain_create (desktop);
 
   /* panel needs to be first so the clock and launcher grid can

@@ -25,7 +25,7 @@ static void on_apps_tree_changed_cb (GMenuTree *tree, gpointer user_data);
 
 G_DEFINE_TYPE(ShellAppSystem, shell_app_system, G_TYPE_OBJECT);
 
-static void shell_app_system_class_init(ShellAppSystemClass *klass)
+static void shell_app_system_class_init(ShellAppSystemClass *klass)   //hyjiang, related with G_DEFINE_TYPE ???
 {
   GObjectClass *gobject_class = (GObjectClass *)klass;
 

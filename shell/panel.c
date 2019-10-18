@@ -250,7 +250,7 @@ maynard_panel_dispose (GObject *object)
 }
 
 static void
-maynard_panel_class_init (MaynardPanelClass *klass)
+maynard_panel_class_init (MaynardPanelClass *klass)                    //hyjiang, not calling ???
 {
   GObjectClass *object_class = (GObjectClass *)klass;
   GParamSpec *param_spec;
@@ -258,7 +258,7 @@ maynard_panel_class_init (MaynardPanelClass *klass)
   object_class->constructed = maynard_panel_constructed;
   object_class->dispose = maynard_panel_dispose;
 
-  signals[APP_MENU_TOGGLED] = g_signal_new ("app-menu-toggled",
+  signals[APP_MENU_TOGGLED] = g_signal_new ("app-menu-toggled",         //hyjiang, like QT
       G_TYPE_FROM_CLASS (klass), G_SIGNAL_RUN_LAST, 0, NULL, NULL,
       NULL, G_TYPE_NONE, 0);
 

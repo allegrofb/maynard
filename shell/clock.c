@@ -120,7 +120,7 @@ volume_changed_cb (GtkRange *range,
       FALSE, FALSE, 0);
   gtk_widget_show (self->priv->volume_image);
 
-  g_signal_emit (self, signals[VOLUME_CHANGED], 0, value, icon_name);
+  g_signal_emit (self, signals[VOLUME_CHANGED], 0, value, icon_name);   //hyjiang, signal emit
 }
 
 static gboolean
@@ -318,7 +318,7 @@ maynard_clock_constructed (GObject *object)
 
   setup_mixer (self);
 
-  wall_clock_notify_cb (self->priv->wall_clock, NULL, self);
+  wall_clock_notify_cb (self->priv->wall_clock, NULL, self);   //hyjiang, gnome-wall-clock
 }
 
 static void
