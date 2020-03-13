@@ -155,7 +155,7 @@ weston_desktop_shell_configure (void *data,
     struct wl_surface *surface,
     int32_t width, int32_t height)
 {
-  shell_configure(data, edges, surface, width, height);
+  shell_configure(data, edges, surface, width, height);     //hyjiang, callback by weston-desktop-shell protocol
 }
 
 static void
@@ -457,7 +457,7 @@ panel_create (struct desktop *desktop)           //hyjiang
   panel->surface = gdk_wayland_window_get_wl_surface (gdk_window);
 
   weston_desktop_shell_set_user_data (desktop->wshell, desktop);
-  weston_desktop_shell_set_panel (desktop->wshell, desktop->output,
+  weston_desktop_shell_set_panel (desktop->wshell, desktop->output,   //hyjiang, weston-desktop-shell protocol
       panel->surface);
   weston_desktop_shell_set_panel_position (desktop->wshell,
      WESTON_DESKTOP_SHELL_PANEL_POSITION_LEFT);
@@ -552,7 +552,7 @@ background_create (struct desktop *desktop)
   background->pixbuf = scale_background (unscaled_background);
   g_object_unref (unscaled_background);
 
-  background->window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+  background->window = gtk_window_new (GTK_WINDOW_TOPLEVEL);    //hyjiang, gtk api GTK_WINDOW_TOPLEVEL
 
   g_signal_connect (background->window, "destroy",
       G_CALLBACK (destroy_cb), NULL);
@@ -570,7 +570,7 @@ background_create (struct desktop *desktop)
   background->surface = gdk_wayland_window_get_wl_surface (gdk_window);     //hyjiang, get wl_surface via gtk 3.0 api, latest version not found
 
   weston_desktop_shell_set_user_data (desktop->wshell, desktop);
-  weston_desktop_shell_set_background (desktop->wshell, desktop->output,    //hyjiang, weston-desktop-shell.xml function, call weston server
+  weston_desktop_shell_set_background (desktop->wshell, desktop->output,    //hyjiang, weston-desktop-shell protocol
       background->surface);
 
   desktop->background = background;
@@ -615,7 +615,7 @@ css_setup (struct desktop *desktop)
 
   file = g_file_new_for_uri ("resource:///org/raspberry-pi/maynard/style.css");
 
-  if (!gtk_css_provider_load_from_file (provider, file, &error))
+  if (!gtk_css_provider_load_from_file (provider, file, &error))    //hyjiang, gtk api load css
     {
       g_warning ("Failed to load CSS file: %s", error->message);
       g_clear_error (&error);
@@ -739,7 +739,7 @@ registry_handle_global (void *data,
 
   if (!strcmp (interface, "weston_desktop_shell"))
     {
-      d->wshell = wl_registry_bind (registry, name,
+      d->wshell = wl_registry_bind (registry, name,           //hyjiang, weston-desktop-shell protocol, interface
           &weston_desktop_shell_interface, MIN(version, 1));
       weston_desktop_shell_add_listener (d->wshell, &wshell_listener, d);
       weston_desktop_shell_set_user_data (d->wshell, d);
@@ -827,7 +827,7 @@ main (int argc,
 
   desktop->gdk_display = gdk_display_get_default ();
   desktop->display =
-    gdk_wayland_display_get_wl_display (desktop->gdk_display);
+    gdk_wayland_display_get_wl_display (desktop->gdk_display);   //hyjiang, gtk api get wl_display
   if (desktop->display == NULL)
     {
       fprintf (stderr, "failed to get display: %m\n");
@@ -835,7 +835,7 @@ main (int argc,
     }
 
   desktop->registry = wl_display_get_registry (desktop->display);
-  wl_registry_add_listener (desktop->registry,
+  wl_registry_add_listener (desktop->registry,                   //hyjiang, register listener, initial global variable, likely weston-desktop-shell interface
       &registry_listener, desktop);
 
   /* Wait until we have been notified about the compositor,
@@ -856,12 +856,12 @@ main (int argc,
   desktop->pointer_out_of_panel = FALSE;
 
   css_setup (desktop);
-  background_create (desktop);                //hyjiang, create background, call weston server api via protocol 
+  background_create (desktop);                //hyjiang, create background, and info server via weston-desktop-shell protocol 
   curtain_create (desktop);
 
   /* panel needs to be first so the clock and launcher grid can
    * be added to its layer */
-  panel_create (desktop);                     //hyjiang
+  panel_create (desktop);                     //hyjiang, left side, have vertial button, click last buton showing curtain ??
   clock_create (desktop);
   launcher_grid_create (desktop);
   grab_surface_create (desktop);

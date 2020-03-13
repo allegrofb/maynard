@@ -49,7 +49,7 @@ struct MaynardPanelPrivate {
   gchar *volume_icon_name;
 };
 
-G_DEFINE_TYPE(MaynardPanel, maynard_panel, GTK_TYPE_WINDOW)
+G_DEFINE_TYPE(MaynardPanel, maynard_panel, GTK_TYPE_WINDOW)     //hyjiang, gtk api
 
 static void
 maynard_panel_init (MaynardPanel *self)

@@ -47,7 +47,7 @@ struct MaynardLauncherPrivate {
   GtkWidget *grid;
 };
 
-G_DEFINE_TYPE(MaynardLauncher, maynard_launcher, GTK_TYPE_WINDOW)
+G_DEFINE_TYPE(MaynardLauncher, maynard_launcher, GTK_TYPE_WINDOW)     //hyjiang, gtk api
 
 /* each grid item is 114x114 */
 #define GRID_ITEM_WIDTH 114
