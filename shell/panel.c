@@ -250,7 +250,7 @@ maynard_panel_dispose (GObject *object)
 }
 
 static void
-maynard_panel_class_init (MaynardPanelClass *klass)                    //hyjiang, not calling ???
+maynard_panel_class_init (MaynardPanelClass *klass)                    //hyjiang, not calling ???, gtk gui api
 {
   GObjectClass *object_class = (GObjectClass *)klass;
   GParamSpec *param_spec;

@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "weston-desktop-shell-client-protocol.h": "c",
+        "vertical-clock.h": "c",
+        "gdkkeysyms.h": "c",
+        "exampleapp.h": "c"
+    }
+}
