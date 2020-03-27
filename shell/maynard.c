@@ -672,9 +672,9 @@ background_create (struct desktop *desktop)
   g_signal_connect (background->window, "draw",
       G_CALLBACK (draw_cb), desktop);
 
-  gtk_widget_add_events(background->window, GDK_KEY_PRESS_MASK);
-  g_signal_connect (G_OBJECT(background->window), "event", 
-    G_CALLBACK (on_event), desktop);
+  // gtk_widget_add_events(background->window, GDK_KEY_PRESS_MASK);
+  // g_signal_connect (G_OBJECT(background->window), "event", 
+  //   G_CALLBACK (on_event), desktop);
   // g_signal_connect (G_OBJECT(background->window), "key-press-event", 
   //   G_CALLBACK (on_key_press), desktop);
 
@@ -683,7 +683,7 @@ background_create (struct desktop *desktop)
   gtk_widget_realize (background->window);
 
   gdk_window = gtk_widget_get_window (background->window);
-  gdk_wayland_window_set_use_custom_surface (gdk_window);
+  gdk_wayland_window_set_use_custom_surface (gdk_window);              //hyjiang, *******
 
   background->surface = gdk_wayland_window_get_wl_surface (gdk_window);     //hyjiang, get wl_surface via gtk 3.0 api, latest version not found
 
@@ -756,6 +756,7 @@ pointer_handle_enter (void *data,
     wl_fixed_t sx_w,
     wl_fixed_t sy_w)
 {
+  fprintf(stderr, "pointer_handle_enter\n");
 }
 
 static void
@@ -764,6 +765,7 @@ pointer_handle_leave (void *data,
     uint32_t serial,
     struct wl_surface *surface)
 {
+  fprintf(stderr, "pointer_handle_leave\n");
 }
 
 static void
@@ -773,6 +775,7 @@ pointer_handle_motion (void *data,
     wl_fixed_t sx_w,
     wl_fixed_t sy_w)
 {
+  // fprintf(stderr, "pointer_handle_motion\n");
 }
 
 static void
@@ -783,6 +786,8 @@ pointer_handle_button (void *data,
     uint32_t button,
     uint32_t state_w)
 {
+  fprintf(stderr, "pointer_handle_button\n");
+
   struct desktop *desktop = data;
 
   if (state_w != WL_POINTER_BUTTON_STATE_RELEASED)
@@ -804,6 +809,8 @@ pointer_handle_axis (void *data,
     uint32_t axis,
     wl_fixed_t value)
 {
+  fprintf(stderr, "pointer_handle_axis\n");
+
 }
 
 static const struct wl_pointer_listener pointer_listener = {
@@ -820,6 +827,7 @@ static void
 keyboard_handle_keymap(void *data, struct wl_keyboard *keyboard,
 		       uint32_t format, int fd, uint32_t size)
 {
+  fprintf(stderr,"keyboard_handle_keymap %d\n",__LINE__);
 	struct desktop *input = data;
 	struct xkb_keymap *keymap;
 	struct xkb_state *state;
@@ -834,30 +842,39 @@ keyboard_handle_keymap(void *data, struct wl_keyboard *keyboard,
 		close(fd);
 		return;
 	}
+  fprintf(stderr,"%d format=%d\n",__LINE__,format);
 
 	if (format != WL_KEYBOARD_KEYMAP_FORMAT_XKB_V1) {
 		close(fd);
 		return;
 	}
+  fprintf(stderr,"%d\n",__LINE__);
 
 	map_str = mmap(NULL, size, PROT_READ, MAP_PRIVATE, fd, 0);
 	if (map_str == MAP_FAILED) {
 		close(fd);
 		return;
 	}
+  fprintf(stderr,"%d\n",__LINE__);
 
 	/* Set up XKB keymap */
 	keymap = xkb_keymap_new_from_string(input->xkb_context,
 					    map_str,
 					    XKB_KEYMAP_FORMAT_TEXT_V1,
 					    0);
+  fprintf(stderr,"%d\n",__LINE__);
+
 	munmap(map_str, size);
+    fprintf(stderr,"%d\n",__LINE__);
+
 	close(fd);
+  fprintf(stderr,"%d\n",__LINE__);
 
 	if (!keymap) {
 		fprintf(stderr, "failed to compile keymap\n");
 		return;
 	}
+  fprintf(stderr,"%d\n",__LINE__);
 
 	/* Set up XKB state */
 	state = xkb_state_new(keymap);
@@ -866,6 +883,7 @@ keyboard_handle_keymap(void *data, struct wl_keyboard *keyboard,
 		xkb_keymap_unref(keymap);
 		return;
 	}
+  fprintf(stderr,"%d\n",__LINE__);
 
 	/* Look up the preferred locale, falling back to "C" as default */
 	if (!(locale = getenv("LC_ALL")))
@@ -899,9 +917,14 @@ keyboard_handle_keymap(void *data, struct wl_keyboard *keyboard,
 			"Disabiling compose\n", locale);
 	}
 #endif
+      fprintf(stderr,"%d\n",__LINE__);
 
 	xkb_keymap_unref(input->xkb.keymap);
+        fprintf(stderr,"%d\n",__LINE__);
+
 	xkb_state_unref(input->xkb.state);
+        fprintf(stderr,"%d\n",__LINE__);
+
 	input->xkb.keymap = keymap;
 	input->xkb.state = state;
 
@@ -911,6 +934,9 @@ keyboard_handle_keymap(void *data, struct wl_keyboard *keyboard,
 		1 << xkb_keymap_mod_get_index(input->xkb.keymap, "Mod1");
 	input->xkb.shift_mask =
 		1 << xkb_keymap_mod_get_index(input->xkb.keymap, "Shift");
+
+      fprintf(stderr,"%d\n",__LINE__);
+
 }
 
 static void
@@ -918,12 +944,16 @@ keyboard_handle_enter(void *data, struct wl_keyboard *keyboard,
 		      uint32_t serial, struct wl_surface *surface,
 		      struct wl_array *keys)
 {
+    fprintf(stderr,"keyboard_handle_enter %d\n",__LINE__);
+
 }
 
 static void
 keyboard_handle_leave(void *data, struct wl_keyboard *keyboard,
 		      uint32_t serial, struct wl_surface *surface)
 {
+    fprintf(stderr,"keyboard_handle_leave %d\n",__LINE__);
+
 }
 
 static void
@@ -932,12 +962,36 @@ keyboard_handle_modifiers(void *data, struct wl_keyboard *keyboard,
 			  uint32_t mods_latched, uint32_t mods_locked,
 			  uint32_t group)
 {
+    fprintf(stderr,"keyboard_handle_modifiers %d\n",__LINE__);
+
+  struct desktop *input = data;
+	xkb_mod_mask_t mask;
+
+	/* If we're not using a keymap, then we don't handle PC-style modifiers */
+	if (!input->xkb.keymap)
+		return;
+    fprintf(stderr,"%d\n",__LINE__);
+
+	xkb_state_update_mask(input->xkb.state, mods_depressed, mods_latched,
+			      mods_locked, 0, 0, group);
+	mask = xkb_state_serialize_mods(input->xkb.state,
+					XKB_STATE_MODS_DEPRESSED |
+					XKB_STATE_MODS_LATCHED);
+	input->modifiers = 0;
+	if (mask & input->xkb.control_mask)
+		input->modifiers |= MOD_CONTROL_MASK;
+	if (mask & input->xkb.alt_mask)
+		input->modifiers |= MOD_ALT_MASK;
+	if (mask & input->xkb.shift_mask)
+		input->modifiers |= MOD_SHIFT_MASK;
+
 }
 
 static void
 keyboard_handle_repeat_info(void *data, struct wl_keyboard *keyboard,
 			    int32_t rate, int32_t delay)
 {
+    fprintf(stderr,"keyboard_handle_repeat_info %d\n",__LINE__);
 
 }
 
@@ -946,6 +1000,8 @@ keyboard_handle_key(void *data, struct wl_keyboard *keyboard,
 		    uint32_t serial, uint32_t time, uint32_t key,
 		    uint32_t state_w)
 {
+  fprintf(stderr,"keyboard_handle_key %d\n",__LINE__);
+
 	struct desktop *input = data;
 	// struct window *window = input->keyboard_focus;
 	uint32_t code, num_syms;
@@ -973,6 +1029,8 @@ keyboard_handle_key(void *data, struct wl_keyboard *keyboard,
 	if (num_syms == 1)
 		sym = syms[0];
 
+  g_print("keyboard_handle_key: %d\n", sym);
+  printf("keyboard_handle_key: %d\n", sym);
 
 	if (sym == XKB_KEY_F5 && input->modifiers == MOD_ALT_MASK) {
 		if (state == WL_KEYBOARD_KEY_STATE_PRESSED)
@@ -1043,8 +1101,6 @@ seat_handle_capabilities (void *data,
   }
 
   /* TODO: keyboard and touch */
-
-
 	if ((caps & WL_SEAT_CAPABILITY_KEYBOARD) && !desktop->keyboard) {
 		desktop->keyboard = wl_seat_get_keyboard(seat);
 		wl_keyboard_set_user_data(desktop->keyboard, desktop);
@@ -1057,9 +1113,6 @@ seat_handle_capabilities (void *data,
 			wl_keyboard_destroy(desktop->keyboard);
 		desktop->keyboard = NULL;
 	}
-
-
-
 }
 
 static void
@@ -1171,6 +1224,7 @@ main (int argc,
   desktop->helper = NULL;
   desktop->seat = NULL;
   desktop->pointer = NULL;
+  desktop->keyboard = NULL;
 
   desktop->gdk_display = gdk_display_get_default ();
   desktop->display =
@@ -1180,6 +1234,17 @@ main (int argc,
       fprintf (stderr, "failed to get display: %m\n");
       return -1;
     }
+
+
+	desktop->xkb_context = xkb_context_new(0);
+	if (desktop->xkb_context == NULL) {
+		fprintf(stderr, "Failed to create XKB context\n");
+    free(desktop);
+		return -1;
+	}
+  desktop->xkb.keymap = NULL;
+  desktop->xkb.state = NULL;
+  
 
   desktop->registry = wl_display_get_registry (desktop->display);
   wl_registry_add_listener (desktop->registry,                   //hyjiang, register listener, initial global variable, likely weston-desktop-shell interface
@@ -1216,5 +1281,8 @@ main (int argc,
   gtk_main ();
 
   /* TODO cleanup */
+	xkb_context_unref(desktop->xkb_context);
+
+
   return EXIT_SUCCESS;
 }
