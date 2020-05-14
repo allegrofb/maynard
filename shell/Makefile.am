@@ -3,6 +3,7 @@ libexec_PROGRAMS = maynard
 AM_CFLAGS = $(GCC_CFLAGS)
 AM_CPPFLAGS = $(CLIENT_CFLAGS) $(GTK_CFLAGS)
 
+
 maynard_SOURCES =				\
 	maynard.c				\
 	app-icon.c				\
@@ -25,7 +26,7 @@ maynard_SOURCES =				\
 	weston-desktop-shell-protocol.c		\
 	shell-helper-client-protocol.h		\
 	shell-helper-protocol.c
-maynard_LDADD = $(GTK_LIBS) -lm
+maynard_LDADD = ../keynes/libttt.la $(GTK_LIBS) -lm
 
 BUILT_SOURCES =					\
 	weston-desktop-shell-client-protocol.h	\

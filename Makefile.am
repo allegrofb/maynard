@@ -1,3 +1,3 @@
-SUBDIRS = data protocol shell po
+SUBDIRS = data protocol keynes shell po
 
 bin_SCRIPTS = maynard
