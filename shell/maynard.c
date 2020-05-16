@@ -83,7 +83,7 @@ struct desktop {
   gboolean pointer_out_of_panel;
 
 
-  struct wl_keyboard *keyboard;
+  struct wl_keyboard *keyboard;      //hyjiang
 	struct xkb_context *xkb_context;
   uint32_t seat_version;
 	struct {
@@ -148,35 +148,35 @@ shell_configure (struct desktop *desktop,                          //hyjiang, ca
       width, height);
 
   /* TODO: make this height a little nicer */
-  // window_height = height * MAYNARD_PANEL_HEIGHT_RATIO;
-  // gtk_window_resize (GTK_WINDOW (desktop->panel->window),      //hyjiang, adjust panel size
-  //     MAYNARD_PANEL_WIDTH, window_height);
+  window_height = height * MAYNARD_PANEL_HEIGHT_RATIO;
+  gtk_window_resize (GTK_WINDOW (desktop->panel->window),      //hyjiang, adjust panel size
+      MAYNARD_PANEL_WIDTH, window_height);
 
-  // maynard_launcher_calculate (MAYNARD_LAUNCHER (desktop->launcher_grid->window),
-  //     &grid_width, &grid_height, NULL);
-  // gtk_widget_set_size_request (desktop->launcher_grid->window,       //hyjiang, adjust lancher_grid size
-  //     grid_width, grid_height);
+  maynard_launcher_calculate (MAYNARD_LAUNCHER (desktop->launcher_grid->window),
+      &grid_width, &grid_height, NULL);
+  gtk_widget_set_size_request (desktop->launcher_grid->window,       //hyjiang, adjust lancher_grid size
+      grid_width, grid_height);
 
-  // shell_helper_move_surface (desktop->helper, desktop->panel->surface,
-  //     0, (height - window_height) / 2);
+  shell_helper_move_surface (desktop->helper, desktop->panel->surface,
+      0, (height - window_height) / 2);
 
-  // gtk_window_resize (GTK_WINDOW (desktop->clock->window),             //hyjiang, adjust clock size
-  //     MAYNARD_CLOCK_WIDTH, MAYNARD_CLOCK_HEIGHT);
+  gtk_window_resize (GTK_WINDOW (desktop->clock->window),             //hyjiang, adjust clock size
+      MAYNARD_CLOCK_WIDTH, MAYNARD_CLOCK_HEIGHT);
 
-  // shell_helper_move_surface (desktop->helper, desktop->clock->surface,
-  //     MAYNARD_PANEL_WIDTH, (height - window_height) / 2);
+  shell_helper_move_surface (desktop->helper, desktop->clock->surface,
+      MAYNARD_PANEL_WIDTH, (height - window_height) / 2);
 
-  // shell_helper_move_surface (desktop->helper,
-  //     desktop->launcher_grid->surface,
-  //     - grid_width,
-  //     ((height - window_height) / 2) + MAYNARD_CLOCK_HEIGHT);
+  shell_helper_move_surface (desktop->helper,
+      desktop->launcher_grid->surface,
+      - grid_width,
+      ((height - window_height) / 2) + MAYNARD_CLOCK_HEIGHT);
 
   weston_desktop_shell_desktop_ready (desktop->wshell);
 
   /* TODO: why does the panel signal leave on drawing for
    * startup? we don't want to have to have this silly
    * timeout. */
-  //g_timeout_add_seconds (1, connect_enter_leave_signals, desktop);    //hyjiang, setup enter leave signals
+  g_timeout_add_seconds (1, connect_enter_leave_signals, desktop);    //hyjiang, setup enter leave signals
 }
 
 static void
@@ -756,7 +756,7 @@ pointer_handle_enter (void *data,
     wl_fixed_t sx_w,
     wl_fixed_t sy_w)
 {
-  fprintf(stderr, "pointer_handle_enter\n");
+  // fprintf(stderr, "pointer_handle_enter\n");
 }
 
 static void
@@ -765,7 +765,7 @@ pointer_handle_leave (void *data,
     uint32_t serial,
     struct wl_surface *surface)
 {
-  fprintf(stderr, "pointer_handle_leave\n");
+  // fprintf(stderr, "pointer_handle_leave\n");
 }
 
 static void
@@ -786,7 +786,7 @@ pointer_handle_button (void *data,
     uint32_t button,
     uint32_t state_w)
 {
-  fprintf(stderr, "pointer_handle_button\n");
+  // fprintf(stderr, "pointer_handle_button\n");
 
   struct desktop *desktop = data;
 
@@ -809,7 +809,7 @@ pointer_handle_axis (void *data,
     uint32_t axis,
     wl_fixed_t value)
 {
-  fprintf(stderr, "pointer_handle_axis\n");
+  // fprintf(stderr, "pointer_handle_axis\n");
 
 }
 
@@ -1101,18 +1101,18 @@ seat_handle_capabilities (void *data,
   }
 
   /* TODO: keyboard and touch */
-	if ((caps & WL_SEAT_CAPABILITY_KEYBOARD) && !desktop->keyboard) {
-		desktop->keyboard = wl_seat_get_keyboard(seat);
-		wl_keyboard_set_user_data(desktop->keyboard, desktop);
-		wl_keyboard_add_listener(desktop->keyboard, &keyboard_listener,               //<------------------- hyjiang, setup keyboard listener
-					 desktop);
-	} else if (!(caps & WL_SEAT_CAPABILITY_KEYBOARD) && desktop->keyboard) {
-		if (desktop->seat_version >= WL_KEYBOARD_RELEASE_SINCE_VERSION)
-			wl_keyboard_release(desktop->keyboard);
-		else
-			wl_keyboard_destroy(desktop->keyboard);
-		desktop->keyboard = NULL;
-	}
+	// if ((caps & WL_SEAT_CAPABILITY_KEYBOARD) && !desktop->keyboard) {
+	// 	desktop->keyboard = wl_seat_get_keyboard(seat);
+	// 	wl_keyboard_set_user_data(desktop->keyboard, desktop);
+	// 	wl_keyboard_add_listener(desktop->keyboard, &keyboard_listener,               //<------------------- hyjiang, setup keyboard listener
+	// 				 desktop);
+	// } else if (!(caps & WL_SEAT_CAPABILITY_KEYBOARD) && desktop->keyboard) {
+	// 	if (desktop->seat_version >= WL_KEYBOARD_RELEASE_SINCE_VERSION)
+	// 		wl_keyboard_release(desktop->keyboard);
+	// 	else
+	// 		wl_keyboard_destroy(desktop->keyboard);
+	// 	desktop->keyboard = NULL;
+	// }
 }
 
 static void
@@ -1269,14 +1269,14 @@ main (int argc,
 
   css_setup (desktop);
   background_create (desktop);                //hyjiang, create background, and info server via weston-desktop-shell protocol 
-  //curtain_create (desktop);                   //hyjiang, related with shell-helper protocol, show the installed app box ??
+  curtain_create (desktop);                   //hyjiang, related with shell-helper protocol, show the installed app box ??
 
   /* panel needs to be first so the clock and launcher grid can
    * be added to its layer */
-  //panel_create (desktop);                     //hyjiang, left side, have vertial button, click last buton showing curtain ??
-  // clock_create (desktop);
-  //launcher_grid_create (desktop);
-  //grab_surface_create (desktop);
+  panel_create (desktop);                     //hyjiang, left side, have vertial button, click last buton showing curtain ??
+  clock_create (desktop);
+  launcher_grid_create (desktop);
+  grab_surface_create (desktop);
 
   gtk_main ();
 

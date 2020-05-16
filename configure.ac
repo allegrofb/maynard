@@ -4,7 +4,7 @@ AC_INIT([maynard],
 
 AC_CONFIG_HEADERS([config.h])
 
-AM_INIT_AUTOMAKE([1.11 foreign no-dist-gzip dist-xz])
+AM_INIT_AUTOMAKE([1.11 foreign no-dist-gzip dist-xz subdir-objects])
 
 AM_SILENT_RULES([yes])
 
@@ -43,6 +43,7 @@ PKG_CHECK_MODULES([GTK], [
 	gnome-desktop-3.0
 	alsa
 	xkbcommon >= 0.3.0
+	gtkmm-3.0 >= 3.8.0
 ])
 
 PKG_CHECK_MODULES([WESTON], [
@@ -53,6 +54,28 @@ PKG_CHECK_MODULES([WESTON], [
 PKG_CHECK_MODULES([CORE],[fontconfig xrender xcomposite xdamage xfixes xext x11 gtk+-3.0])
 AC_SUBST([CORE_CFLAGS])
 AC_SUBST([CORE_LIBS])
+
+AC_ARG_ENABLE([xinerama],
+    AC_HELP_STRING([--disable-xinerama],[Disable XINERAMA support.]))
+if test x$enable_xinerama != xno ; then
+    PKG_CHECK_MODULES([XINERAMA],[xinerama],[
+	CORE_CFLAGS="$XINERAMA_CFLAGS $CORE_CFLAGS"
+	CORE_LIBS="$XINERAMA_LIBS $CORE_LIBS"
+	AC_DEFINE([XINERAMA],[1],[Define to enable Xinerama support.])
+	features="$features xinerama"],
+	[AC_MSG_WARN([XINERAMA is not supported.])])
+fi
+
+AC_ARG_ENABLE([fribidi],
+    AC_HELP_STRING([--disable-fribidi],[Disable right to left support.]))
+if test "$enable_fribidi" != "no" && test "$enable_i18n" != "no"; then
+    PKG_CHECK_MODULES([FRIBIDI], [fribidi],[
+	CORE_CFLAGS="$FRIBIDI_CFLAGS $CORE_CFLAGS"
+	CORE_LIBS="$FRIBIDI_LIBS $CORE_LIBS"
+	AC_DEFINE([CONFIG_FRIBIDI],[1],[Define to enable fribidi support.])
+	features="$features fribidi"],
+	[AC_MSG_WARN([FRIBIDI is not supported.])])
+fi
 
 AC_ARG_ENABLE([gdk-pixbuf],
     AC_HELP_STRING([--disable-gdk-pixbuf],[Disable gdk-pixbuf rendering.
@@ -98,6 +121,9 @@ else
 fi
 AC_SUBST([IMAGE_CFLAGS])
 AC_SUBST([IMAGE_LIBS])
+
+CORE_LIBS="$CORE_LIBS -lm"
+
 
 GLIB_GSETTINGS
 
