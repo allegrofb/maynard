@@ -50,6 +50,10 @@ libttt_la_SOURCES += \
 
 
 keynes_SOURCES = \
+	Wayland.h \
+	Wayland.cc \
+	Background.h \
+	Background.cc \
 	keynes.cc \
 	../shell/weston-desktop-shell-client-protocol.h	\
 	../shell/weston-desktop-shell-protocol.c		\

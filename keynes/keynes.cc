@@ -1,5 +1,7 @@
 
 #include "keynes.h"
+#include "Wayland.h"
+#include "Background.h"
 
 #include <math.h>
 #include <stdlib.h>
@@ -415,16 +417,13 @@ background_create (Global *desktop)
 int main(int argc, char *argv[])
 {
     gdk_set_allowed_backends("wayland");
-
-
     Gtk::Main kit(argc, argv);
-
 
     // auto app =
     //     Gtk::Application::create(argc, argv,
     //                              "org.gtkmm.examples.base");
 
-    Global* g = new Global();
+    Wayland* g = Wayland::getInstance();
 
     /* Wait until we have been notified about the compositor,
    * shell, and shell helper objects */
@@ -438,24 +437,10 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    g->grid_visible = FALSE;
-    g->system_visible = FALSE;
-    g->volume_visible = FALSE;
-    g->pointer_out_of_panel = FALSE;
-
-    background_create(g);
-
-    // return app->run(argc,argv);
-
-    // Gtk::Window window;
-    // window.set_default_size(200, 200);
+    BackgroundWindow window;
+    window.show();
 
     // return app->run(window);
-
-    // gtk_main();
-
     Gtk::Main::run();
-
-
     return EXIT_SUCCESS;
 }
