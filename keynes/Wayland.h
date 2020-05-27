@@ -32,6 +32,7 @@ public:
     struct wl_pointer *pointer;
 
     GtkWidget *background;
+    GtkWidget *panel;
 };
 
 #endif //WAYLAND_H

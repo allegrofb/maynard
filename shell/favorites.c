@@ -105,6 +105,7 @@ favorites_changed (GSettings *settings,
   for (i = 0; i < g_strv_length (favorites); i++)
     {
       gchar *fav = favorites[i];
+      // printf("*** %s\n",fav);
 
       add_favorite (self, fav);
     }

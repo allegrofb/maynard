@@ -78,47 +78,11 @@ draw_cb(GtkWidget *widget,
 BackgroundWindow::BackgroundWindow()
 {
     set_title("keynes");
-    set_resizable(false);
-    set_decorated(false);
     set_position(Gtk::WIN_POS_CENTER);
-
-    // const gchar *filename;
-    // GdkPixbuf *unscaled_background;
-    // const gchar *xpm_data[] = {"1 1 1 1", "_ c SteelBlue", "_"};
-
-    // filename = g_getenv("MAYNARD_BACKGROUND");
-    // if (filename && filename[0] != '\0')
-    //     unscaled_background = gdk_pixbuf_new_from_file(filename, NULL);
-    // else
-    //     unscaled_background = gdk_pixbuf_new_from_xpm_data(xpm_data);
-
-    // if (!unscaled_background)
-    // {
-    //     g_message("Could not load background (%s).",
-    //               filename ? filename : "built-in");
-    //     exit(EXIT_FAILURE);
-    // }
-
-    // this->pixbuf = scale_background(unscaled_background);
-    // g_object_unref(unscaled_background);
-
-    this->window = (GtkWidget *)gobj();
-    Wayland::getInstance()->background = this->window;
-    // g_signal_connect(this->window, "draw",
-    //                  G_CALLBACK(draw_cb), this);
 
     this->signal_draw().connect(sigc::mem_fun(*this, &BackgroundWindow::on_draw));
 
-    // gtk_widget_realize(this->window);
-    realize();
-
-    GdkWindow *gdk_window;
-    gdk_window = gtk_widget_get_window(this->window);
-    gdk_wayland_window_set_use_custom_surface(gdk_window);
-
-    this->surface = gdk_wayland_window_get_wl_surface(gdk_window);
-
-    weston_desktop_shell_set_user_data(Wayland::getInstance()->wshell, Wayland::getInstance());
+    Wayland::getInstance()->background = this->window;
     weston_desktop_shell_set_background(Wayland::getInstance()->wshell, Wayland::getInstance()->output,
                                         this->surface);
 }

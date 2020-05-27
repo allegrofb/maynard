@@ -2,19 +2,13 @@
 #ifndef BACKGROUND_H
 #define BACKGROUND_H
 
-#include <gtkmm.h>
-#include <gdk/gdkwayland.h>                      
+#include "WlWindow.h"
 
-class BackgroundWindow : public Gtk::Window
+class BackgroundWindow : public WlWindow
 {
 public:
   BackgroundWindow();
   virtual ~BackgroundWindow();
-
-public:
-    GtkWidget *window;
-    GdkPixbuf *pixbuf;
-    struct wl_surface *surface;
 
 protected:
   //Signal handlers:

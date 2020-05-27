@@ -1,10 +1,14 @@
 {
     "files.associations": {
-        "weston-desktop-shell-client-protocol.h": "c",
-        "vertical-clock.h": "c",
-        "gdkkeysyms.h": "c",
-        "exampleapp.h": "c",
-        "type_traits": "cpp",
-        "streambuf": "cpp"
+        "*.tcc": "cpp",
+        "array": "cpp",
+        "string": "cpp",
+        "string_view": "cpp",
+        "algorithm": "cpp",
+        "deque": "cpp",
+        "memory": "cpp",
+        "queue": "cpp",
+        "utility": "cpp",
+        "vector": "cpp"
     }
 }

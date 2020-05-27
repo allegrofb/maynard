@@ -1,4 +1,4 @@
-libexec_PROGRAMS = keynes
+libexec_PROGRAMS = keynes testMaynardFavorites testMaynardLauncher
 
 AM_CFLAGS = $(GCC_CFLAGS)
 AM_CPPFLAGS = $(CLIENT_CFLAGS) $(CORE_CFLAGS)
@@ -50,6 +50,12 @@ libttt_la_SOURCES += \
 
 
 keynes_SOURCES = \
+	MaynardFavorites.h \
+	MaynardFavorites.cc \
+	WlWindow.h \
+	WlWindow.cc \
+	Panel.h \
+	Panel.cc \
 	Wayland.h \
 	Wayland.cc \
 	Background.h \
@@ -61,6 +67,23 @@ keynes_SOURCES = \
 	../shell/shell-helper-protocol.c
 
 keynes_LDADD = $(GTK_LIBS) -lm
+
+
+testMaynardFavorites_SOURCES = \
+	MaynardFavorites.h \
+	MaynardFavorites.cc \
+	testMaynardFavorites.cc 
+
+testMaynardFavorites_LDADD = $(GTK_LIBS) -lm
+
+
+testMaynardLauncher_SOURCES = \
+	MaynardLauncher.h \
+	MaynardLauncher.cc \
+	../shell/shell-app-system.c \
+	testMaynardLauncher.cc 
+
+testMaynardLauncher_LDADD = $(GTK_LIBS) -lm
 
 
 
