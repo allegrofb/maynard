@@ -1,6 +1,7 @@
 #include <iostream>
 #include <algorithm> // std::max
 #include "MaynardLauncher.h"
+#include "Config.h"
 
 MaynardLauncher::MaynardLauncher()
 {
@@ -27,6 +28,17 @@ MaynardLauncher::MaynardLauncher()
 
     /* now actually fill the grid */
     installed_changed_cb(app_system, this);
+
+    #ifndef TEST_APP
+    Wayland* g = Wayland::getInstance();
+    g->launcher_grid.window = this->window;
+    g->launcher_grid.surface = this->surface;
+    g->launcher_grid.pixbuf = this->pixbuf;
+    shell_helper_add_surface_to_layer(g->helper,
+                                      g->launcher_grid.surface,
+                                      g->panel.surface);
+    show_all_children();
+    #endif
 }
 
 MaynardLauncher::~MaynardLauncher()
@@ -47,14 +59,6 @@ MaynardLauncher::~MaynardLauncher()
 }
 
 
-
-
-#define MAYNARD_PANEL_WIDTH 56
-#define MAYNARD_PANEL_HEIGHT_RATIO 0.73
-#define MAYNARD_CLOCK_WIDTH (MAYNARD_PANEL_WIDTH * 2.6)
-#define MAYNARD_CLOCK_HEIGHT (MAYNARD_PANEL_WIDTH * 2)
-#define GRID_ITEM_WIDTH 114
-#define GRID_ITEM_HEIGHT 114
 
 
 void MaynardLauncher::maynard_launcher_calculate (MaynardLauncher *self,

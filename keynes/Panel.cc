@@ -16,6 +16,11 @@ PanelWindow::PanelWindow()
     // gtk_style_context_add_class(
     //     gtk_widget_get_style_context(GTK_WIDGET(self)),
     //     "maynard-panel");
+    auto context = get_style_context();
+    context->add_class("maynard-panel");
+
+
+
 
     /* main vbox */
     add(main_box);

@@ -1,79 +1,78 @@
 #include "Wayland.h"
+#include "Config.h"
 
 //----------------------------------------------------------------------------
 
-
 static void
-pointer_handle_enter (void *data,
-    struct wl_pointer *pointer,
-    uint32_t serial,
-    struct wl_surface *surface,
-    wl_fixed_t sx_w,
-    wl_fixed_t sy_w)
+pointer_handle_enter(void *data,
+                     struct wl_pointer *pointer,
+                     uint32_t serial,
+                     struct wl_surface *surface,
+                     wl_fixed_t sx_w,
+                     wl_fixed_t sy_w)
 {
-  // fprintf(stderr, "pointer_handle_enter\n");
+    // fprintf(stderr, "pointer_handle_enter\n");
 }
 
 static void
-pointer_handle_leave (void *data,
-    struct wl_pointer *pointer,
-    uint32_t serial,
-    struct wl_surface *surface)
+pointer_handle_leave(void *data,
+                     struct wl_pointer *pointer,
+                     uint32_t serial,
+                     struct wl_surface *surface)
 {
-  // fprintf(stderr, "pointer_handle_leave\n");
+    // fprintf(stderr, "pointer_handle_leave\n");
 }
 
 static void
-pointer_handle_motion (void *data,
-    struct wl_pointer *pointer,
-    uint32_t time,
-    wl_fixed_t sx_w,
-    wl_fixed_t sy_w)
+pointer_handle_motion(void *data,
+                      struct wl_pointer *pointer,
+                      uint32_t time,
+                      wl_fixed_t sx_w,
+                      wl_fixed_t sy_w)
 {
-  // fprintf(stderr, "pointer_handle_motion\n");
+    // fprintf(stderr, "pointer_handle_motion\n");
 }
 
 static void
-pointer_handle_button (void *data,
-    struct wl_pointer *pointer,
-    uint32_t serial,
-    uint32_t time,
-    uint32_t button,
-    uint32_t state_w)
+pointer_handle_button(void *data,
+                      struct wl_pointer *pointer,
+                      uint32_t serial,
+                      uint32_t time,
+                      uint32_t button,
+                      uint32_t state_w)
 {
-  // fprintf(stderr, "pointer_handle_button\n");
+    // fprintf(stderr, "pointer_handle_button\n");
 
-  Wayland *desktop = (Wayland*)data;
+    Wayland *desktop = (Wayland *)data;
 
-  if (state_w != WL_POINTER_BUTTON_STATE_RELEASED)
-    return;
+    if (state_w != WL_POINTER_BUTTON_STATE_RELEASED)
+        return;
 
-//   if (!desktop->pointer_out_of_panel)
-//     return;
+    //   if (!desktop->pointer_out_of_panel)
+    //     return;
 
-//   if (desktop->grid_visible)
-//     launcher_grid_toggle (desktop->launcher_grid->window, desktop);
+    //   if (desktop->grid_visible)
+    //     launcher_grid_toggle (desktop->launcher_grid->window, desktop);
 
-//   panel_window_leave_cb (NULL, NULL, desktop);
+    //   panel_window_leave_cb (NULL, NULL, desktop);
 }
 
 static void
-pointer_handle_axis (void *data,
-    struct wl_pointer *pointer,
-    uint32_t time,
-    uint32_t axis,
-    wl_fixed_t value)
+pointer_handle_axis(void *data,
+                    struct wl_pointer *pointer,
+                    uint32_t time,
+                    uint32_t axis,
+                    wl_fixed_t value)
 {
-  // fprintf(stderr, "pointer_handle_axis\n");
-
+    // fprintf(stderr, "pointer_handle_axis\n");
 }
 
 static const struct wl_pointer_listener pointer_listener = {
-  pointer_handle_enter,
-  pointer_handle_leave,
-  pointer_handle_motion,
-  pointer_handle_button,
-  pointer_handle_axis,
+    pointer_handle_enter,
+    pointer_handle_leave,
+    pointer_handle_motion,
+    pointer_handle_button,
+    pointer_handle_axis,
 };
 
 static void
@@ -121,49 +120,50 @@ static const struct wl_seat_listener seat_listener = {
     seat_handle_capabilities,
     seat_handle_name};
 
-
 static void
-shell_configure (Wayland *desktop,     
-    uint32_t edges,
-    struct wl_surface *surface,
-    int32_t width, int32_t height)
+shell_configure(Wayland *desktop,
+                uint32_t edges,
+                struct wl_surface *surface,
+                int32_t width, int32_t height)
 {
-  int window_height;
-  int grid_width, grid_height;
+    int window_height;
+    int grid_width, grid_height;
 
-  gtk_widget_set_size_request (desktop->background,    //hyjiang, adjust background size
-      width, height);
+    gtk_widget_set_size_request(desktop->background.window, //hyjiang, adjust background size
+                                width, height);
 
-  /* TODO: make this height a little nicer */
-//   window_height = height * MAYNARD_PANEL_HEIGHT_RATIO;
-//   gtk_window_resize (GTK_WINDOW (desktop->panel->window),      //hyjiang, adjust panel size
-//       MAYNARD_PANEL_WIDTH, window_height);
+    /* TODO: make this height a little nicer */
+    window_height = height * MAYNARD_PANEL_HEIGHT_RATIO;
+    gtk_window_resize(GTK_WINDOW(desktop->panel.window), //hyjiang, adjust panel size
+                      MAYNARD_PANEL_WIDTH, window_height);
 
-//   maynard_launcher_calculate (MAYNARD_LAUNCHER (desktop->launcher_grid->window),
-//       &grid_width, &grid_height, NULL);
-//   gtk_widget_set_size_request (desktop->launcher_grid->window,       //hyjiang, adjust lancher_grid size
-//       grid_width, grid_height);
+    //   maynard_launcher_calculate (MAYNARD_LAUNCHER (desktop->launcher_grid.window),
+    //       &grid_width, &grid_height, NULL);
+    grid_width = 60;
+    grid_height = 1000;
+    gtk_widget_set_size_request(desktop->launcher_grid.window, //hyjiang, adjust lancher_grid size
+                                grid_width, grid_height);
 
-//   shell_helper_move_surface (desktop->helper, desktop->panel->surface,
-//       0, (height - window_height) / 2);
+    shell_helper_move_surface(desktop->helper, desktop->panel.surface,
+                              0, (height - window_height) / 2);
 
-//   gtk_window_resize (GTK_WINDOW (desktop->clock->window),             //hyjiang, adjust clock size
-//       MAYNARD_CLOCK_WIDTH, MAYNARD_CLOCK_HEIGHT);
+    //   gtk_window_resize (GTK_WINDOW (desktop->clock->window),             //hyjiang, adjust clock size
+    //       MAYNARD_CLOCK_WIDTH, MAYNARD_CLOCK_HEIGHT);
 
-//   shell_helper_move_surface (desktop->helper, desktop->clock->surface,
-//       MAYNARD_PANEL_WIDTH, (height - window_height) / 2);
+    //   shell_helper_move_surface (desktop->helper, desktop->clock->surface,
+    //       MAYNARD_PANEL_WIDTH, (height - window_height) / 2);
 
-//   shell_helper_move_surface (desktop->helper,
-//       desktop->launcher_grid->surface,
-//       - grid_width,
-//       ((height - window_height) / 2) + MAYNARD_CLOCK_HEIGHT);
+    shell_helper_move_surface(desktop->helper,
+                              desktop->launcher_grid.surface,
+                              -grid_width,
+                              ((height - window_height) / 2) + MAYNARD_CLOCK_HEIGHT);
 
-  weston_desktop_shell_desktop_ready (desktop->wshell);
+    weston_desktop_shell_desktop_ready(desktop->wshell);
 
-  /* TODO: why does the panel signal leave on drawing for
+    /* TODO: why does the panel signal leave on drawing for
    * startup? we don't want to have to have this silly
    * timeout. */
-//   g_timeout_add_seconds (1, connect_enter_leave_signals, desktop);
+    //   g_timeout_add_seconds (1, connect_enter_leave_signals, desktop);
 }
 
 static void
@@ -173,7 +173,7 @@ weston_desktop_shell_configure(void *data,
                                struct wl_surface *surface,
                                int32_t width, int32_t height)
 {
-    shell_configure((Wayland*)data, edges, surface, width, height);
+    shell_configure((Wayland *)data, edges, surface, width, height);
 }
 
 static void
@@ -258,6 +258,14 @@ Wayland *Wayland::getInstance()
 
 Wayland::Wayland()
 {
+    initial_panel_timeout_id = 0;
+    hide_panel_idle_id = 0;
+
+    grid_visible = false;
+    system_visible = false;
+    volume_visible = false;
+    pointer_out_of_panel = false;
+
     display = NULL;
     registry = NULL;
     wshell = NULL;
@@ -277,4 +285,72 @@ Wayland::Wayland()
     this->registry = wl_display_get_registry(this->display);
     wl_registry_add_listener(this->registry,
                              &registry_listener, this);
+}
+
+void Wayland::launcher_grid_toggle()
+{
+    if (this->grid_visible)
+    {
+        shell_helper_slide_surface_back(this->helper,
+                                        this->launcher_grid.surface);
+
+        // shell_helper_curtain(this->helper, this->curtain->surface, 0);
+    }
+    else
+    {
+        int width;
+
+        gtk_widget_get_size_request(this->launcher_grid.window,
+                                    &width, NULL);
+
+        shell_helper_slide_surface(this->helper,
+                                   this->launcher_grid.surface,
+                                   width + MAYNARD_PANEL_WIDTH, 0);
+
+        // shell_helper_curtain(this->helper, this->curtain->surface, 1);
+    }
+
+    this->grid_visible = !this->grid_visible;
+}
+
+void Wayland::system_toggled()
+{
+}
+
+void Wayland::volume_toggled()
+{
+}
+
+void Wayland::favorite_launched()
+{
+}
+
+void Wayland::button_toggled_cb(
+    gboolean *visible,
+    gboolean *not_visible)
+{
+    *visible = !*visible;
+    *not_visible = FALSE;
+
+    // if (this->system_visible)
+    // {
+    //     maynard_clock_show_section(MAYNARD_CLOCK(this->clock.window),
+    //                                MAYNARD_CLOCK_SECTION_SYSTEM);
+    //     maynard_panel_show_previous(MAYNARD_PANEL(this->panel.window),
+    //                                 MAYNARD_PANEL_BUTTON_SYSTEM);
+    // }
+    // else if (this->volume_visible)
+    // {
+    //     maynard_clock_show_section(MAYNARD_CLOCK(this->clock.window),
+    //                                MAYNARD_CLOCK_SECTION_VOLUME);
+    //     maynard_panel_show_previous(MAYNARD_PANEL(this->panel.window),
+    //                                 MAYNARD_PANEL_BUTTON_VOLUME);
+    // }
+    // else
+    // {
+    //     maynard_clock_show_section(MAYNARD_CLOCK(this->clock.window),
+    //                                MAYNARD_CLOCK_SECTION_CLOCK);
+    //     maynard_panel_show_previous(MAYNARD_PANEL(this->panel.window),
+    //                                 MAYNARD_PANEL_BUTTON_NONE);
+    // }
 }

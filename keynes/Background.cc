@@ -82,7 +82,9 @@ BackgroundWindow::BackgroundWindow()
 
     this->signal_draw().connect(sigc::mem_fun(*this, &BackgroundWindow::on_draw));
 
-    Wayland::getInstance()->background = this->window;
+    Wayland::getInstance()->background.window = this->window;
+    Wayland::getInstance()->background.surface = this->surface;
+    Wayland::getInstance()->background.pixbuf = this->pixbuf;
     weston_desktop_shell_set_background(Wayland::getInstance()->wshell, Wayland::getInstance()->output,
                                         this->surface);
 }

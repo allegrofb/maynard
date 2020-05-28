@@ -1,9 +1,9 @@
-
 #ifndef WLWINDOW_H
 #define WLWINDOW_H
 
 #include <gtkmm.h>
 #include <gdk/gdkwayland.h>                      
+#include "Wayland.h"
 
 class WlWindow : public Gtk::Window
 {

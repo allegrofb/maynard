@@ -13,7 +13,13 @@ extern "C" {
 }
 #endif
 
+
+#ifdef TEST_APP
 class MaynardLauncher : public Gtk::Window
+#else
+#include "WlWindow.h"
+class MaynardLauncher : public WlWindow
+#endif
 {
 public:
     MaynardLauncher();

@@ -20,6 +20,39 @@ public:
     static Wayland *getInstance();
 
 public:
+    void launcher_grid_toggle();
+    void system_toggled();
+    void volume_toggled();
+    void favorite_launched();
+
+    void button_toggled_cb(
+        gboolean *visible,
+        gboolean *not_visible);
+
+public:
+    gboolean grid_visible;
+    gboolean system_visible;
+    gboolean volume_visible;
+    gboolean pointer_out_of_panel;
+
+public:
+    struct element
+    {
+        GtkWidget *window;
+        GdkPixbuf *pixbuf;
+        struct wl_surface *surface;
+    };
+
+    struct element background;
+    struct element panel;
+    struct element curtain;
+    struct element launcher_grid;
+    struct element clock;
+
+    guint initial_panel_timeout_id;
+    guint hide_panel_idle_id;
+
+public:
     struct wl_display *display;
     struct wl_registry *registry;
     struct weston_desktop_shell *wshell;
@@ -31,8 +64,6 @@ public:
     struct wl_seat *seat;
     struct wl_pointer *pointer;
 
-    GtkWidget *background;
-    GtkWidget *panel;
 };
 
 #endif //WAYLAND_H

@@ -1,4 +1,8 @@
-libexec_PROGRAMS = keynes testMaynardFavorites testMaynardLauncher
+libexec_PROGRAMS = keynes \
+					testMaynardFavorites \
+					testMaynardLauncher \
+					testMaynardVerticalClock \
+					testMaynardPanel
 
 AM_CFLAGS = $(GCC_CFLAGS)
 AM_CPPFLAGS = $(CLIENT_CFLAGS) $(CORE_CFLAGS)
@@ -50,17 +54,29 @@ libttt_la_SOURCES += \
 
 
 keynes_SOURCES = \
-	MaynardFavorites.h \
-	MaynardFavorites.cc \
 	WlWindow.h \
 	WlWindow.cc \
-	Panel.h \
-	Panel.cc \
+	MaynardFavorites.h \
+	MaynardFavorites.cc \
+	MaynardVerticalClock.h \
+	MaynardVerticalClock.cc \
+	MaynardPanel.h \
+	MaynardPanel.cc \
+	MaynardCurtain.h \
+	MaynardCurtain.cc \
+	MaynardLauncher.h \
+	MaynardLauncher.cc \
 	Wayland.h \
 	Wayland.cc \
 	Background.h \
 	Background.cc \
 	keynes.cc \
+	../shell/app-icon.c \
+	../shell/app-icon.h \
+	../shell/shell-app-system.h \
+	../shell/shell-app-system.c \
+	../shell/maynard-resources.c \
+	../shell/maynard-resources.h \
 	../shell/weston-desktop-shell-client-protocol.h	\
 	../shell/weston-desktop-shell-protocol.c		\
 	../shell/shell-helper-client-protocol.h		\
@@ -70,6 +86,8 @@ keynes_LDADD = $(GTK_LIBS) -lm
 
 
 testMaynardFavorites_SOURCES = \
+	../shell/app-icon.c \
+	../shell/app-icon.h \
 	MaynardFavorites.h \
 	MaynardFavorites.cc \
 	testMaynardFavorites.cc 
@@ -83,7 +101,29 @@ testMaynardLauncher_SOURCES = \
 	../shell/shell-app-system.c \
 	testMaynardLauncher.cc 
 
+testMaynardLauncher_CXXFLAGS = $(AM_CXXFLAGS) -DTEST_APP
 testMaynardLauncher_LDADD = $(GTK_LIBS) -lm
 
 
+testMaynardVerticalClock_SOURCES = \
+	MaynardVerticalClock.h \
+	MaynardVerticalClock.cc \
+	testMaynardVerticalClock.cc 
+
+testMaynardVerticalClock_LDADD = $(GTK_LIBS) -lm
+
+testMaynardPanel_SOURCES = \
+	../shell/app-icon.c \
+	../shell/app-icon.h \
+	MaynardFavorites.h \
+	MaynardFavorites.cc \
+	MaynardVerticalClock.h \
+	MaynardVerticalClock.cc \
+	MaynardPanel.h \
+	MaynardPanel.cc \
+	../shell/shell-app-system.c \
+	testMaynardPanel.cc 
+
+testMaynardPanel_CXXFLAGS = $(AM_CXXFLAGS) -DTEST_APP
+testMaynardPanel_LDADD = $(GTK_LIBS) -lm
 
