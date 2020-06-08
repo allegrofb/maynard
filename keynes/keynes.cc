@@ -267,6 +267,8 @@ int main(int argc, char *argv[])
 
     // grab_surface_create (desktop);
 
+    g->desktop_ready();
+
     //     /* TODO: why does the panel signal leave on drawing for
     //    * startup? we don't want to have to have this silly
     //    * timeout. */

@@ -6,6 +6,44 @@
 #include "../shell/weston-desktop-shell-client-protocol.h"
 #include "../shell/shell-helper-client-protocol.h"
 
+class Wayland;
+
+    struct rectangle
+    {
+        int32_t x;
+        int32_t y;
+        int32_t width;
+        int32_t height;
+    };
+
+    struct output
+    {
+        Wayland *wayland;
+        struct wl_output *output;
+        uint32_t server_output_id;
+        struct rectangle allocation;
+        struct wl_list link;
+        int transform;
+        int scale;
+        char *make;
+        char *model;
+
+        // display_output_handler_t destroy_handler;
+        void *user_data;
+    };
+
+
+// struct output {
+// 	struct wl_output *output;
+// 	uint32_t server_output_id;
+// 	struct wl_list link;
+
+// 	int x;
+// 	int y;
+// 	struct panel *panel;
+// 	struct background *background;
+// };
+
 class Wayland
 {
 private:
@@ -20,6 +58,8 @@ public:
     static Wayland *getInstance();
 
 public:
+    void desktop_ready();
+
     void launcher_grid_toggle();
     void system_toggled();
     void volume_toggled();
@@ -41,6 +81,13 @@ public:
         GtkWidget *window;
         GdkPixbuf *pixbuf;
         struct wl_surface *surface;
+
+        element()
+        {
+            window = NULL;
+            pixbuf = NULL;
+            surface = NULL;
+        }
     };
 
     struct element background;
@@ -64,6 +111,9 @@ public:
     struct wl_seat *seat;
     struct wl_pointer *pointer;
 
+	struct wl_list outputs;
+
+public:
 };
 
 #endif //WAYLAND_H

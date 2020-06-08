@@ -1,4 +1,5 @@
 libexec_PROGRAMS = keynes \
+					testBackground \
 					testMaynardFavorites \
 					testMaynardLauncher \
 					testMaynardVerticalClock \
@@ -84,6 +85,21 @@ keynes_SOURCES = \
 
 keynes_LDADD = $(GTK_LIBS) -lm
 
+
+testBackground_SOURCES = \
+	WlWindow.h \
+	WlWindow.cc \
+	Wayland.h \
+	Wayland.cc \
+	Background.h \
+	Background.cc \
+	testBackground.cc \
+	../shell/weston-desktop-shell-client-protocol.h	\
+	../shell/weston-desktop-shell-protocol.c \
+	../shell/shell-helper-client-protocol.h \
+	../shell/shell-helper-protocol.c
+
+testBackground_LDADD = $(GTK_LIBS) -lgnome-panel2 -lm
 
 testMaynardFavorites_SOURCES = \
 	../shell/app-icon.c \

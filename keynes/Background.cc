@@ -1,7 +1,6 @@
 #include <iostream>
 #include "Background.h"
 #include "../shell/weston-desktop-shell-client-protocol.h"
-#include "../shell/shell-helper-client-protocol.h"
 
 #include "Wayland.h"
 
